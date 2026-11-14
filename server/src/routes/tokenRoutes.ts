@@ -32,3 +32,4 @@ router.patch('/:id/move', moveToken);
 router.post('/reorder', batchReorderTokens);
 
 export default router;
+

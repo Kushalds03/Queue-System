@@ -132,3 +132,4 @@ export const QueueFormModal: React.FC<QueueFormModalProps> = ({
     </Modal>
   );
 };
+

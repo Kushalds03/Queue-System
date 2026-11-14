@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.js';
 import { useToast } from '../context/ToastContext.js';
 import { authApi } from '../services/api.js';
@@ -7,13 +7,10 @@ import { Input } from '../components/common/Input.js';
 import { Button } from '../components/common/Button.js';
 import {
   User,
-  Building,
   Key,
   Volume2,
-  Database,
-  ShieldCheck,
+  VolumeX,
   Save,
-  CheckCircle2,
 } from 'lucide-react';
 
 export const Settings: React.FC = () => {
@@ -33,14 +30,23 @@ export const Settings: React.FC = () => {
     return localStorage.getItem('queueflow_sound') !== 'false';
   });
 
-  // Test Audio Chime
-  const testChime = () => {
+  // Sync state if user changes in AuthContext
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setOrganization(user.organization || '');
+    }
+  }, [user]);
+
+  // Audio Notification Sound Player (Web Audio API)
+  const playNotificationSound = () => {
     try {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
 
       osc.type = 'sine';
+      // Notification tone frequencies: 587.33Hz (D5) -> 880Hz (A5)
       osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
 
@@ -52,9 +58,9 @@ export const Settings: React.FC = () => {
 
       osc.start();
       osc.stop(audioCtx.currentTime + 0.85);
-      info('Audio chime sounded');
+      info('Notification sound played');
     } catch (e) {
-      console.warn('Audio test failed:', e);
+      console.warn('Audio playback failed:', e);
     }
   };
 
@@ -62,7 +68,10 @@ export const Settings: React.FC = () => {
     setSoundEnabled(enabled);
     localStorage.setItem('queueflow_sound', String(enabled));
     if (enabled) {
-      testChime();
+      playNotificationSound();
+      info('Sound notifications enabled');
+    } else {
+      info('Sound notifications muted');
     }
   };
 
@@ -78,7 +87,7 @@ export const Settings: React.FC = () => {
       setIsUpdatingProfile(true);
       const res = await authApi.updateProfile({
         name: name.trim(),
-        organization: organization.trim() || undefined,
+        organization: organization.trim(),
       });
 
       if (res.success && res.user) {
@@ -133,7 +142,7 @@ export const Settings: React.FC = () => {
           System & Account Settings
         </h1>
         <p className="text-xs sm:text-sm text-charcoal-600 mt-1">
-          Manage your manager profile, security credentials, and audio preferences
+          Manage your manager profile, security credentials, and sound preferences
         </p>
       </div>
 
@@ -146,7 +155,7 @@ export const Settings: React.FC = () => {
           <div>
             <h2 className="text-sm font-bold text-charcoal-900">Manager Profile</h2>
             <p className="text-[11px] text-charcoal-500">
-              Personal and business details associated with this account
+              Personal and organization details associated with this account
             </p>
           </div>
         </div>
@@ -157,7 +166,7 @@ export const Settings: React.FC = () => {
               label="Manager Full Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Sarah Jenkins"
+              placeholder="Enter your full name"
               disabled={isUpdatingProfile}
             />
 
@@ -165,7 +174,7 @@ export const Settings: React.FC = () => {
               label="Organization / Business Name"
               value={organization}
               onChange={(e) => setOrganization(e.target.value)}
-              placeholder="e.g. Central Metro Hospital"
+              placeholder="e.g. City Health Clinic"
               disabled={isUpdatingProfile}
             />
           </div>
@@ -259,39 +268,57 @@ export const Settings: React.FC = () => {
       <Card className="p-6">
         <div className="flex items-center gap-2.5 pb-4 border-b border-border">
           <div className="w-8 h-8 rounded bg-blue-50 text-blue-600 border border-blue-200/80 flex items-center justify-center">
-            <Volume2 className="w-4 h-4" />
+            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </div>
           <div>
-            <h2 className="text-sm font-bold text-charcoal-900">Sound & Counter Alerts</h2>
+            <h2 className="text-sm font-bold text-charcoal-900">Sound Notifications</h2>
             <p className="text-[11px] text-charcoal-500">
-              Synthesized audio chime tone whenever a customer is called to counter
+              Play a notification sound when a customer is called
             </p>
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-between">
+        <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-sm font-semibold text-charcoal-900 block">
-              Audible Chime on "Call Next"
-            </span>
-            <span className="text-xs text-charcoal-500">
-              Plays an attention-getting dual-tone chime when dispatching tickets.
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-charcoal-900">
+                {soundEnabled ? 'Sound On' : 'Sound Off'}
+              </span>
+              <span
+                className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
+                  soundEnabled
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    : 'bg-canvas-subtle text-charcoal-500 border border-border'
+                }`}
+              >
+                {soundEnabled ? 'Enabled' : 'Muted'}
+              </span>
+            </div>
+            <span className="text-xs text-charcoal-500 mt-1 block">
+              Plays an audio alert tone when dispatching the next customer to the counter.
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Button type="button" variant="secondary" size="sm" onClick={testChime}>
+          <div className="flex items-center gap-3 self-end sm:self-center">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={playNotificationSound}
+              leftIcon={<Volume2 className="w-3.5 h-3.5 text-charcoal-500" />}
+            >
               Test Sound
             </Button>
 
             <button
               type="button"
               onClick={() => handleToggleSound(!soundEnabled)}
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-coral-500/20 ${
                 soundEnabled ? 'bg-coral-500' : 'bg-charcoal-300'
               }`}
               role="switch"
               aria-checked={soundEnabled}
+              aria-label="Toggle sound notifications"
             >
               <span
                 className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
@@ -299,47 +326,6 @@ export const Settings: React.FC = () => {
                 }`}
               />
             </button>
-          </div>
-        </div>
-      </Card>
-
-      {/* 4. Deployment Readiness & Database Status */}
-      <Card className="p-6">
-        <div className="flex items-center gap-2.5 pb-4 border-b border-border">
-          <div className="w-8 h-8 rounded bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center">
-            <Database className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-charcoal-900">Database & Deployment Architecture</h2>
-            <p className="text-[11px] text-charcoal-500">
-              Target configuration for Vercel (Frontend), Render (Backend), and Neon (PostgreSQL)
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div className="p-3 bg-canvas-subtle rounded border border-border">
-            <span className="font-bold text-charcoal-900 block mb-0.5">Frontend Target</span>
-            <span className="text-charcoal-600">Vercel (React 18 + Vite + TS)</span>
-            <span className="mt-2 block text-emerald-700 font-semibold flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Production Ready
-            </span>
-          </div>
-
-          <div className="p-3 bg-canvas-subtle rounded border border-border">
-            <span className="font-bold text-charcoal-900 block mb-0.5">Backend Target</span>
-            <span className="text-charcoal-600">Render (Node.js + Express API)</span>
-            <span className="mt-2 block text-emerald-700 font-semibold flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Production Ready
-            </span>
-          </div>
-
-          <div className="p-3 bg-canvas-subtle rounded border border-border">
-            <span className="font-bold text-charcoal-900 block mb-0.5">Database Target</span>
-            <span className="text-charcoal-600">Neon (PostgreSQL + Prisma ORM)</span>
-            <span className="mt-2 block text-emerald-700 font-semibold flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Schema Synced
-            </span>
           </div>
         </div>
       </Card>

@@ -68,7 +68,7 @@ export const Register: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Manager Full Name *"
-              placeholder="e.g. Dr. Sarah Jenkins"
+              placeholder="Enter your full name"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -142,3 +142,4 @@ export const Register: React.FC = () => {
     </div>
   );
 };
+

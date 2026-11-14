@@ -90,6 +90,60 @@ describe('QueueFlow Full-Stack API Suite', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.user.email).toBe(testEmail.toLowerCase());
     });
+
+    it('should update manager profile name and organization', async () => {
+      const res = await request(app)
+        .put('/api/auth/profile')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          name: 'Updated Manager Name',
+          organization: 'Updated Health Services',
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.user.name).toBe('Updated Manager Name');
+      expect(res.body.user.organization).toBe('Updated Health Services');
+    });
+
+    it('should reject password update with invalid current password', async () => {
+      const res = await request(app)
+        .put('/api/auth/profile')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          currentPassword: 'IncorrectPassword',
+          newPassword: 'NewPassword123!',
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.success).toBe(false);
+      expect(res.body.message).toContain('Current password does not match');
+    });
+
+    it('should update manager password with correct current password', async () => {
+      const res = await request(app)
+        .put('/api/auth/profile')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          currentPassword: testPassword,
+          newPassword: 'NewPassword123!',
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+
+      // Verify can log in with new password
+      const loginRes = await request(app)
+        .post('/api/auth/login')
+        .send({
+          email: testEmail,
+          password: 'NewPassword123!',
+        });
+
+      expect(loginRes.status).toBe(200);
+      expect(loginRes.body.token).toBeDefined();
+      authToken = loginRes.body.token; // Update token for subsequent tests
+    });
   });
 
   describe('2. Queue Management Module', () => {
@@ -332,3 +386,4 @@ describe('QueueFlow Full-Stack API Suite', () => {
     });
   });
 });
+

@@ -99,3 +99,4 @@ export interface AnalyticsData {
   recentActivity: ActivityLog[];
   queuesList: { id: string; name: string; prefix: string; status: QueueStatus }[];
 }
+

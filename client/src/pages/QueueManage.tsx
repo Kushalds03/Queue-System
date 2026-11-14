@@ -78,10 +78,10 @@ export const QueueManage: React.FC = () => {
     setSoundEnabled(nextVal);
     localStorage.setItem('queueflow_sound', String(nextVal));
     if (nextVal) {
-      info('Audio notifications enabled');
+      info('Sound notifications enabled');
       playChime();
     } else {
-      info('Audio notifications muted');
+      info('Sound notifications muted');
     }
   };
 
@@ -304,7 +304,7 @@ export const QueueManage: React.FC = () => {
 
         {/* Top Control Buttons */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Audio Chime Toggle */}
+          {/* Sound Notification Toggle */}
           <button
             onClick={toggleSound}
             className={`p-2 rounded border text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-subtle ${
@@ -312,10 +312,10 @@ export const QueueManage: React.FC = () => {
                 ? 'bg-white text-charcoal-800 border-border hover:bg-canvas-subtle'
                 : 'bg-canvas-subtle text-charcoal-400 border-border line-through'
             }`}
-            title={soundEnabled ? 'Mute counter audio chimes' : 'Enable counter audio chimes'}
+            title={soundEnabled ? 'Mute sound notifications' : 'Enable sound notifications'}
           >
             {soundEnabled ? <Volume2 className="w-4 h-4 text-coral-500" /> : <VolumeX className="w-4 h-4" />}
-            <span className="hidden sm:inline">Chime</span>
+            <span className="hidden sm:inline">{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
           </button>
 
           {/* Pause / Resume Queue */}
@@ -496,3 +496,4 @@ export const QueueManage: React.FC = () => {
     </div>
   );
 };
+

@@ -162,3 +162,4 @@ export const WaitingList: React.FC<WaitingListProps> = ({
     </div>
   );
 };
+

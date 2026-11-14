@@ -151,3 +151,4 @@ export const TokenHistoryModal: React.FC<TokenHistoryModalProps> = ({
     </Modal>
   );
 };
+

@@ -83,21 +83,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose, onOpe
           </nav>
         </div>
 
-        {/* Bottom System Status Widget */}
+        {/* Bottom Version Widget */}
         <div className="p-4 border-t border-border/80 bg-canvas/60">
-          <div className="flex items-center justify-between text-[11px] text-charcoal-500 mb-1.5">
-            <span className="font-medium">Version</span>
-            <span className="font-mono text-[10px] bg-canvas-subtle px-1.5 py-0.5 rounded border border-border">v1.0.0</span>
-          </div>
           <div className="flex items-center justify-between text-[11px] text-charcoal-500">
-            <span className="font-medium">Database Status</span>
-            <span className="text-emerald-700 font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Connected
-            </span>
+            <span className="font-medium">QueueFlow</span>
+            <span className="font-mono text-[10px] bg-canvas-subtle px-1.5 py-0.5 rounded border border-border">v1.0.0</span>
           </div>
         </div>
       </aside>
     </>
   );
 };
+

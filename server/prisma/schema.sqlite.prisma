@@ -77,3 +77,4 @@ model ActivityLog {
   @@index([queueId])
   @@map("activity_logs")
 }
+

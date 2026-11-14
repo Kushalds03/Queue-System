@@ -50,10 +50,10 @@ export const register = async (
 
     const user = await prisma.user.create({
       data: {
-        name: validated.name,
+        name: validated.name.trim(),
         email: validated.email.toLowerCase(),
         passwordHash,
-        organization: validated.organization || 'My Organization',
+        organization: validated.organization?.trim() || null,
       },
       select: {
         id: true,
@@ -205,12 +205,14 @@ export const updateProfile = async (
 
     const updateData: {
       name?: string;
-      organization?: string;
+      organization?: string | null;
       passwordHash?: string;
     } = {};
 
-    if (validated.name) updateData.name = validated.name;
-    if (validated.organization !== undefined) updateData.organization = validated.organization;
+    if (validated.name) updateData.name = validated.name.trim();
+    if (validated.organization !== undefined) {
+      updateData.organization = validated.organization.trim() || null;
+    }
 
     if (validated.newPassword) {
       if (!validated.currentPassword) {
@@ -264,3 +266,4 @@ export const updateProfile = async (
     next(error);
   }
 };
+

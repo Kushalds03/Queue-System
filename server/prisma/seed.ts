@@ -18,10 +18,10 @@ async function main() {
   // 1. Create Demo Manager
   const manager = await prisma.user.create({
     data: {
-      name: 'Sarah Jenkins',
+      name: 'Demo Manager',
       email: 'manager@queueflow.com',
       passwordHash,
-      organization: 'Central Metro Health & Services',
+      organization: 'Metro Service Center',
     },
   });
   console.log(`✓ Created Manager: ${manager.name} (${manager.email})`);
@@ -199,3 +199,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

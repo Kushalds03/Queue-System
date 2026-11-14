@@ -21,3 +21,4 @@ router.patch('/:id/toggle-status', toggleQueueStatus);
 router.delete('/:id', deleteQueue);
 
 export default router;
+

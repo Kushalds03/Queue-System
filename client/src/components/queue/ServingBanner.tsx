@@ -145,3 +145,4 @@ export const ServingBanner: React.FC<ServingBannerProps> = ({
     </div>
   );
 };
+

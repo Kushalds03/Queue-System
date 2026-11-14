@@ -9,3 +9,4 @@ router.use(authenticate);
 router.get('/', getAnalytics);
 
 export default router;
+

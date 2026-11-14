@@ -53,17 +53,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle, isMobileMenu
             )}
           </div>
 
-          {/* Right: Actions & User Menu */}
+          {/* Right: User Menu */}
           <div className="flex items-center gap-3">
-            {/* Live Indicator */}
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-200/80 text-[11px] font-medium text-emerald-800">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-              </span>
-              System Live
-            </div>
-
             {/* Profile Dropdown */}
             <div className="relative">
               <button
@@ -121,3 +112,4 @@ export const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle, isMobileMenu
     </header>
   );
 };
+

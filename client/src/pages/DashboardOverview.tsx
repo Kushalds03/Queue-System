@@ -78,7 +78,9 @@ export const DashboardOverview: React.FC = () => {
             Welcome back, {user?.name || 'Manager'}
           </h1>
           <p className="text-xs sm:text-sm text-charcoal-600 mt-1">
-            Real-time status for {user?.organization || 'QueueFlow Service Operations'}
+            {user?.organization
+              ? `Real-time status for ${user.organization}`
+              : 'Real-time queue operations and service status'}
           </p>
         </div>
 
@@ -304,3 +306,4 @@ export const DashboardOverview: React.FC = () => {
     </div>
   );
 };
+

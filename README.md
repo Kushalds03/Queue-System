@@ -7,7 +7,7 @@
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL_%2B_Prisma-336791?style=flat-square)](#)
 [![License](https://img.shields.io/badge/License-MIT-orange?style=flat-square)](#)
 
-> **QueueFlow** is a modern, enterprise-grade full-stack queue and customer flow management application. It equips managers with real-time token dispatching, drag/drop order prioritization, live counter status, sound chime notifications, and database-calculated analytics.
+> **QueueFlow** is a modern, enterprise-grade full-stack queue and customer flow management application. It equips managers with real-time token dispatching, drag/drop order prioritization, live counter status, sound notifications, and database-calculated analytics.
 
 ---
 
@@ -66,7 +66,7 @@ Traditional waiting rooms and walk-in desks suffer from disorganized lines, manu
 - **Prominent "Call Next Customer" Button**: Dispatches the top waiting customer (`position = 1`), transitions token to `SERVING`, and auto-adjusts remaining positions down by 1.
 - **Counter Busy Protection**: Rejects calls if a customer is currently being served at the counter.
 - **Real-Time Elapsed Timer**: Tracks live service duration down to the second with a visual pulsing status indicator.
-- **Dual-tone Audio Chime**: Web Audio API synthesized ding-dong alert rings when calling a customer to counter.
+- **Notification Sound Alert**: Web Audio API synthesized audio alert plays when calling a customer to counter (with Sound On / Sound Off toggle).
 - **One-Click Completion & Cancellation**: Record precise completion and cancellation timestamps.
 
 ### 6. Real-Time Analytics & Operational Intelligence
@@ -281,7 +281,7 @@ VITE_API_URL="http://localhost:5000/api"
 ## 🧪 Automated & Manual Verification
 
 ### Run Automated API Test Suite
-Run the 19 automated integration and unit tests:
+Run the 22 automated integration and unit tests:
 ```bash
 cd server
 npm run test
@@ -290,6 +290,8 @@ npm run test
 ### Test Coverage Highlights:
 - [x] **Manager Registration**: Account creation, duplicate email rejection.
 - [x] **JWT Authentication**: Password hash verification, protected endpoint authorization.
+- [x] **Manager Profile Updates**: Updating manager name and organization with database persistence.
+- [x] **Password Modification**: Validation of current password, secure bcrypt hashing, and login re-verification.
 - [x] **Queue CRUD**: Create, rename, update prefix, toggle active/paused status.
 - [x] **Token Generation**: Sequential token generation (`C-001`, `C-002`, `C-003`).
 - [x] **Queue Reordering**:
@@ -363,10 +365,11 @@ npm run test
 | **Token History** | History modal with completed & cancelled tickets & durations | ✅ Complete |
 | **Real Database Analytics** | Wait time, service time, status donut, 7-day activity trend | ✅ Complete |
 | **UI/UX Visual Quality** | Warm off-white `#FBF9F5`, charcoal typography, coral `#E05A47` | ✅ Complete |
-| **Sound Alert Notifications** | Web Audio API dual-tone chime on calling next customer | ✅ Complete |
-| **19 Automated Tests** | All 19 Vitest integration tests passing | ✅ Complete |
+| **Sound Alert Notifications** | Web Audio API notification sound alert on calling next customer | ✅ Complete |
+| **22 Automated Tests** | All 22 Vitest integration tests passing | ✅ Complete |
 | **Deployment Readiness** | `vercel.json`, `render.yaml`, Neon PostgreSQL schema ready | ✅ Complete |
 
 ---
 
 *QueueFlow is developed and verified for immediate submission.*
+
