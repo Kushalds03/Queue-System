@@ -1,0 +1,79 @@
+// Prisma schema for QueueFlow - Local SQLite Development
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String
+  name         String
+  organization String?       @default("QueueFlow Manager")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  queues       Queue[]
+  activityLogs ActivityLog[]
+
+  @@map("users")
+}
+
+model Queue {
+  id          String        @id @default(uuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  prefix      String        @default("Q")
+  status      String        @default("ACTIVE") // ACTIVE, PAUSED
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  tokens       Token[]
+  activityLogs ActivityLog[]
+
+  @@index([userId])
+  @@map("queues")
+}
+
+model Token {
+  id             String    @id @default(uuid())
+  queueId        String
+  queue          Queue     @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  tokenNumber    String    // e.g. "Q-101", "A-005"
+  sequenceNumber Int       // auto-incrementing integer per queue
+  customerName   String
+  customerPhone  String?
+  notes          String?
+  status         String    @default("WAITING") // WAITING, SERVING, COMPLETED, CANCELLED
+  position       Int       @default(0) // 1, 2, 3... for waiting queue; 0 for others
+  createdAt      DateTime  @default(now())
+  servedAt       DateTime?
+  completedAt    DateTime?
+  cancelledAt    DateTime?
+  updatedAt      DateTime  @updatedAt
+
+  @@index([queueId, status])
+  @@index([queueId, position])
+  @@map("tokens")
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  queueId   String?
+  queue     Queue?   @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  action    String   // TOKEN_CREATED, TOKEN_CALLED, TOKEN_COMPLETED, TOKEN_CANCELLED, QUEUE_UPDATED, QUEUE_PAUSED, QUEUE_RESUMED
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([queueId])
+  @@map("activity_logs")
+}

@@ -1,0 +1,19 @@
+{
+  "name": "queueflow-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QueueFlow - Smart Queue Management System (Full-Stack)",
+  "scripts": {
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "seed": "cd server && npm run prisma:seed",
+    "test": "cd server && npm run test",
+    "start": "cd server && npm run start"
+  },
+  "author": "QueueFlow",
+  "license": "MIT"
+}
